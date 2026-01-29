@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MISIÓN FAMILIAR DIGITAL 🎮</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(100, 100, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255, 100, 100, 0.1) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .game-container {
+            background: rgba(25, 25, 35, 0.95);
+            border-radius: 20px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 0 20px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 800px;
+            overflow: hidden;
+            min-height: 600px;
+            border: 3px solid #4a4aff;
+            position: relative;
+        }
+
+        .game-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #00ff88, #4a4aff, #ff4a4a);
+            animation: scanline 3s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { background-position: -100% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .game-header {
+            background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+            position: relative;
+            border-bottom: 3px solid #4a4aff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .game-header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00ff88, #4a4aff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: none;
+            letter-spacing: 1px;
+        }
+
+        .game-emoji {
+            font-size: 60px;
+            margin-bottom: 15px;
+            display: block;
+            animation: pulse 2s infinite;
+            filter: drop-shadow(0 0 10px rgba(74, 74, 255, 0.5));
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .coins-display {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid gold;
+            border-radius: 10px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: gold;
+        }
+
+        .level-display {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 10px 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .mission-selector {
+            padding: 40px 30px;
+            text-align: center;
+            background: rgba(15, 15, 25, 0.8);
+        }
+
+        .mission-title {
+            font-size: 28px;
+            color: white;
+            margin-bottom: 40px;
+            font-weight: bold;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .mission-title span {
+            color: #00ff88;
+        }
+
+        .mission-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .mission-btn {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 30px 20px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 
+                0 10px 20px rgba(0, 0, 0, 0.3),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mission-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .mission-btn:hover::before {
+            left: 100%;
+        }
+
+        .mission-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 15px 30px rgba(0, 0, 0, 0.4),
+                0 0 20px rgba(74, 74, 255, 0.3);
+        }
+
+        .mission-btn.guardian {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            border: 2px solid #4a9eff;
+        }
+
+        .mission-btn.explorer {
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+            border: 2px solid #ffb74d;
+        }
+
+        .mission-emoji {
+            font-size: 50px;
+            filter: drop-shadow(0 0 5px currentColor);
+        }
+
+        /* Pantalla de confirmación para padres */
+        .confirmation-screen {
+            padding: 50px 30px;
+            text-align: center;
+            background: rgba(15, 15, 25, 0.9);
+            display: none;
+        }
+
+        .confirmation-title {
+            font-size: 32px;
+            color: #4a9eff;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 10px rgba(74, 158, 255, 0.3);
+        }
+
+        .confirmation-message {
+            font-size: 18px;
+            color: #ddd;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            background: rgba(33, 150, 243, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid rgba(74, 158, 255, 0.3);
+        }
+
+        .confirmation-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .confirmation-btn {
+            padding: 18px 35px;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 180px;
+            justify-content: center;
+        }
+
+        .confirmation-btn.start {
+            background: linear-gradient(135deg, #00ff88, #00cc66);
+            color: white;
+        }
+
+        .confirmation-btn.start:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .confirmation-btn.back {
+            background: linear-gradient(135deg, #666, #444);
+            color: white;
+            border: 2px solid #777;
+        }
+
+        .confirmation-btn.back:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border-color: #999;
+        }
+
+        .confirmation-tips {
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 15px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .confirmation-tips h3 {
+            color: gold;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .confirmation-tips ul {
+            text-align: left;
+            color: #ddd;
+            font-size: 14px;
+            line-height: 1.8;
+            padding-left: 20px;
+        }
+
+        .confirmation-tips li {
+            margin-bottom: 8px;
+        }
+
+        /* Resto de estilos... */
+        .world-selector {
+            padding: 40px 30px;
+            text-align: center;
+            background: rgba(15, 15, 25, 0.8);
+            display: none;
+        }
+
+        .world-title {
+            font-size: 28px;
+            color: #00ff88;
+            margin-bottom: 40px;
+            font-weight: bold;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .worlds-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .world-btn {
+            background: rgba(30, 30, 40, 0.9);
+            border: 3px solid;
+            border-radius: 15px;
+            padding: 25px 15px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            color: white;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .world-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .world-btn.games {
+            border-color: #4CAF50;
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(56, 142, 60, 0.3));
+        }
+
+        .world-btn.games:hover {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.3), rgba(56, 142, 60, 0.4));
+            box-shadow: 0 15px 25px rgba(76, 175, 80, 0.2);
+        }
+
+        .world-btn.communication {
+            border-color: #2196F3;
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.2), rgba(21, 101, 192, 0.3));
+        }
+
+        .world-btn.communication:hover {
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.3), rgba(21, 101, 192, 0.4));
+            box-shadow: 0 15px 25px rgba(33, 150, 243, 0.2);
+        }
+
+        .world-btn.learning {
+            border-color: #FF9800;
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.2), rgba(245, 124, 0, 0.3));
+        }
+
+        .world-btn.learning:hover {
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.3), rgba(245, 124, 0, 0.4));
+            box-shadow: 0 15px 25px rgba(255, 152, 0, 0.2);
+        }
+
+        .world-btn.videos {
+            border-color: #9C27B0;
+            background: linear-gradient(135deg, rgba(156, 39, 176, 0.2), rgba(123, 31, 162, 0.3));
+        }
+
+        .world-btn.videos:hover {
+            background: linear-gradient(135deg, rgba(156, 39, 176, 0.3), rgba(123, 31, 162, 0.4));
+            box-shadow: 0 15px 25px rgba(156, 39, 176, 0.2);
+        }
+
+        .world-emoji {
+            font-size: 40px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .mission-screen {
+            padding: 30px;
+            display: none;
+        }
+
+        .mission-progress {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .mission-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #4a4aff);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mission-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.4), 
+                transparent);
+            animation: progressShine 2s infinite;
+        }
+
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .mission-question {
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 30px;
+            line-height: 1.4;
+            text-align: center;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid rgba(74, 74, 255, 0.3);
+        }
+
+        .mission-question span {
+            color: #00ff88;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .mission-options {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .mission-option {
+            background: rgba(40, 40, 50, 0.9);
+            border: 2px solid rgba(100, 100, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            font-size: 18px;
+            font-weight: 500;
+            color: #ddd;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mission-option::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, rgba(74, 74, 255, 0.2), rgba(0, 255, 136, 0.2));
+            transition: width 0.3s;
+        }
+
+        .mission-option:hover::before {
+            width: 100%;
+        }
+
+        .mission-option:hover {
+            transform: translateX(10px);
+            border-color: #4a4aff;
+            box-shadow: 0 5px 15px rgba(74, 74, 255, 0.2);
+        }
+
+        .mission-option.selected {
+            background: linear-gradient(135deg, rgba(74, 74, 255, 0.3), rgba(0, 255, 136, 0.2));
+            border-color: #00ff88;
+            color: white;
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .mission-option.selected::before {
+            width: 100%;
+        }
+
+        .coins-grid {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .coin-option {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid gold;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #333;
+            font-weight: bold;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .coin-option:hover {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .coin-option.selected {
+            transform: scale(1.2) rotate(0deg);
+            background: linear-gradient(135deg, #00ff88 0%, #00cc66 100%);
+            border-color: #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        .coin-option::after {
+            content: '💰';
+            position: absolute;
+            top: -25px;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .coin-option.selected::after {
+            opacity: 1;
+            animation: coinBounce 0.5s;
+        }
+
+        @keyframes coinBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .character-selector {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .character-option {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            border: 3px solid transparent;
+            background: rgba(50, 50, 60, 0.8);
+            font-size: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .character-option:hover {
+            transform: scale(1.1);
+            border-color: #4a4aff;
+            box-shadow: 0 5px 15px rgba(74, 74, 255, 0.3);
+        }
+
+        .character-option.selected {
+            transform: scale(1.2);
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            animation: characterGlow 1s infinite;
+        }
+
+        @keyframes characterGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 136, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(0, 255, 136, 0.5); }
+        }
+
+        .character-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            border: 1px solid #00ff88;
+        }
+
+        .character-option:hover .character-tooltip {
+            opacity: 1;
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 20px;
+            border: 2px solid rgba(74, 74, 255, 0.5);
+            border-radius: 15px;
+            font-size: 18px;
+            background: rgba(30, 30, 40, 0.9);
+            color: white;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            background: rgba(40, 40, 50, 0.9);
+        }
+
+        .mission-navigation {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 18px;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #333344, #222233);
+            color: white;
+            border: 2px solid rgba(100, 100, 255, 0.3);
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border-color: #4a4aff;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .nav-btn.prev {
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+        }
+
+        .nav-btn.next {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+        }
+
+        .nav-btn.finish {
+            background: linear-gradient(135deg, #00ff88 0%, #00cc66 100%);
+            animation: finishPulse 2s infinite;
+        }
+
+        @keyframes finishPulse {
+            0%, 100% { box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3); }
+            50% { box-shadow: 0 5px 25px rgba(0, 255, 136, 0.6); }
+        }
+
+        .mission-complete {
+            padding: 50px 30px;
+            text-align: center;
+            display: none;
+        }
+
+        .celebration-emoji {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: celebrate 1s infinite;
+        }
+
+        @keyframes celebrate {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.2) rotate(-10deg); }
+            50% { transform: scale(1.2) rotate(10deg); }
+            75% { transform: scale(1.1) rotate(-5deg); }
+        }
+
+        .mission-complete h2 {
+            font-size: 36px;
+            color: #00ff88;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .mission-complete p {
+            font-size: 18px;
+            color: #ddd;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .reward-display {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid gold;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 30px auto;
+            max-width: 400px;
+        }
+
+        .reward-display h3 {
+            color: gold;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .reward-coins {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-size: 28px;
+            color: white;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .action-btn {
+            padding: 18px 30px;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #4a4aff, #2196F3);
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(74, 74, 255, 0.3);
+        }
+
+        .action-btn.continue {
+            background: linear-gradient(135deg, #00ff88, #00cc66);
+        }
+
+        .action-btn.continue:hover {
+            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .action-btn.results {
+            background: linear-gradient(135deg, #9C27B0, #673AB7);
+        }
+
+        .action-btn.results:hover {
+            box-shadow: 0 10px 20px rgba(156, 39, 176, 0.3);
+        }
+
+        .secret-vault {
+            padding: 50px 30px;
+            text-align: center;
+            display: none;
+        }
+
+        .vault-title {
+            font-size: 32px;
+            color: gold;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .vault-form {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #4a4aff;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 400px;
+        }
+
+        .vault-input {
+            width: 100%;
+            padding: 18px;
+            margin: 15px 0;
+            border: 2px solid rgba(74, 74, 255, 0.5);
+            border-radius: 10px;
+            font-size: 18px;
+            background: rgba(30, 30, 40, 0.9);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .vault-input:focus {
+            border-color: #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .vault-error {
+            color: #ff4444;
+            margin-top: 10px;
+            font-size: 14px;
+            min-height: 20px;
+        }
+
+        .game-back-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .game-back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #00ff88;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                max-width: 100%;
+            }
+            
+            .mission-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .worlds-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .confirmation-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .confirmation-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .coins-grid {
+                gap: 10px;
+            }
+            
+            .coin-option {
+                width: 50px;
+                height: 50px;
+                font-size: 16px;
+            }
+            
+            .character-option {
+                width: 60px;
+                height: 60px;
+                font-size: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Pantalla de Inicio -->
+        <div class="game-header">
+            <div class="game-emoji">🎮</div>
+            <h1>MISIÓN FAMILIAR DIGITAL</h1>
+            <div class="coins-display" id="coinsDisplay">
+                <span>💰</span>
+                <span id="totalCoins">0</span> MONEDAS
+            </div>
+            <div class="level-display" id="levelDisplay">
+                🏆 NIVEL 1
+            </div>
+        </div>
+
+        <!-- Menú Principal -->
+        <div class="mission-selector" id="missionSelector">
+            <h2 class="mission-title">SELECCIONA TU <span>MISIÓN</span></h2>
+            <div class="mission-buttons">
+                <button class="mission-btn guardian" onclick="showGuardianConfirmation()">
+                    <span class="mission-emoji">🦸‍♂️</span>
+                    GUARDIÁN DIGITAL<br>
+                    <small style="font-size: 14px; opacity: 0.8;">Protege a tu familia</small>
+                </button>
+                <button class="mission-btn explorer" onclick="startExplorerMission()">
+                    <span class="mission-emoji">👦</span>
+                    EXPLORADOR DIGITAL<br>
+                    <small style="font-size: 14px; opacity: 0.8;">Descubre mundos seguros</small>
+                </button>
+            </div>
+            <p style="color: #888; margin-top: 30px;">
+                💡 Cada misión te da monedas y desbloquea niveles
+            </p>
+        </div>
+
+        <!-- Pantalla de Confirmación para Padres -->
+        <div class="confirmation-screen" id="confirmationScreen">
+            <h2 class="confirmation-title">🛡️ MISIÓN: GUARDIÁN DIGITAL</h2>
+            
+            <div class="confirmation-message">
+                <p>¡Bienvenido, Guardián Digital!</p>
+                <p>Tu misión es proteger a tu familia en el mundo digital.</p>
+                <p>Esta encuesta te ayudará a evaluar tus hábitos digitales y a mejorar la seguridad familiar.</p>
+                <br>
+                <p><strong>🧭 Duración:</strong> Aproximadamente 5 minutos</p>
+                <p><strong>🎯 Niveles:</strong> 3 niveles de protección</p>
+                <p><strong>💰 Recompensa:</strong> Hasta 100 monedas por nivel</p>
+            </div>
+
+            <div class="confirmation-tips">
+                <h3>💡 CONSEJOS PARA EL GUARDIÁN:</h3>
+                <ul>
+                    <li>Responde con honestidad para obtener el mejor análisis</li>
+                    <li>Cada respuesta te da monedas para tu tesoro familiar</li>
+                    <li>Completa los 3 niveles para desbloquear recompensas especiales</li>
+                    <li>Puedes pausar y continuar en cualquier momento</li>
+                </ul>
+            </div>
+
+            <div class="confirmation-buttons">
+                <button class="confirmation-btn start" onclick="startGuardianMission()">
+                    <span>🚀</span> COMENZAR MISIÓN
+                </button>
+                <button class="confirmation-btn back" onclick="backToMissionSelect()">
+                    <span>↩️</span> VOLVER AL MENÚ
+                </button>
+            </div>
+        </div>
+
+        <!-- Selector de Mundos -->
+        <div class="world-selector" id="worldSelector">
+            <h2 class="world-title">🌍 SELECCIONA TU MUNDO</h2>
+            <p style="color: #ddd; margin-bottom: 30px;">
+                Cada mundo es una aventura diferente. ¡Elige con cuidado!
+            </p>
+            <div class="worlds-grid">
+                <button class="world-btn games" onclick="startWorld('juegos')">
+                    <span class="world-emoji">🎮</span>
+                    MUNDO JUEGOS
+                </button>
+                <button class="world-btn communication" onclick="startWorld('comunicacion')">
+                    <span class="world-emoji">💬</span>
+                    MUNDO COMUNICACIÓN
+                </button>
+                <button class="world-btn learning" onclick="startWorld('aprendizaje')">
+                    <span class="world-emoji">📚</span>
+                    MUNDO APRENDIZAJE
+                </button>
+                <button class="world-btn videos" onclick="startWorld('videos')">
+                    <span class="world-emoji">📺</span>
+                    MUNDO VIDEOS
+                </button>
+            </div>
+            <button class="game-back-btn" onclick="backToMissionSelect()">⬅️ VOLVER</button>
+        </div>
+
+        <!-- Pantalla de Misión -->
+        <div class="mission-screen" id="missionScreen">
+            <div class="mission-progress">
+                <div class="mission-progress-fill" id="missionProgress"></div>
+            </div>
+            <div class="mission-question" id="missionQuestion"></div>
+            <div id="missionOptions"></div>
+            <div class="mission-navigation" id="missionNavigation"></div>
+        </div>
+
+        <!-- Misión Completada -->
+        <div class="mission-complete" id="missionComplete">
+            <div class="celebration-emoji" id="celebrationEmoji">🎉</div>
+            <h2 id="completionTitle">¡MISIÓN COMPLETADA!</h2>
+            <p id="completionMessage"></p>
+            
+            <div class="reward-display">
+                <h3>🏅 RECOMPENSA OBTENIDA</h3>
+                <div class="reward-coins">
+                    <span>💰</span>
+                    <span id="rewardCoins">+50</span>
+                    <span>MONEDAS</span>
+                </div>
+                <p style="color: #aaa; margin-top: 10px; font-size: 14px;">
+                    Total acumulado: <span id="newTotalCoins">0</span> monedas
+                </p>
+            </div>
+            
+            <div class="action-buttons" id="actionButtons"></div>
+        </div>
+
+        <!-- Bóveda Secreta -->
+        <div class="secret-vault" id="secretVault">
+            <h2 class="vault-title">🔐 BÓVEDA SECRETA</h2>
+            <p style="color: #ddd; margin-bottom: 20px;">
+                Ingresa el código secreto para ver los tesoros recolectados
+            </p>
+            
+            <div class="vault-form">
+                <input type="text" class="vault-input" id="vaultUsername" placeholder="🔑 Código de Guardián" value="usuario">
+                <input type="password" class="vault-input" id="vaultPassword" placeholder="🗝️ Llave Secreta" value="usuario123">
+                <div class="vault-error" id="vaultError"></div>
+                <button class="action-btn results" onclick="openVault()" style="width: 100%; margin-top: 20px;">
+                    <span>✨</span> ABRIR BÓVEDA
+                </button>
+            </div>
+            
+            <button class="game-back-btn" onclick="backToMissionComplete()">⬅️ VOLVER</button>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // SISTEMA DEL JUEGO
+        // ======================
+
+        // Estado del juego
+        const gameState = {
+            totalCoins: 0,
+            currentLevel: 1,
+            currentMission: null, // 'guardian' o 'explorer'
+            currentWorld: null,
+            currentQuestion: 0,
+            answers: [],
+            completedMissions: JSON.parse(localStorage.getItem('completedMissions')) || [],
+            missionHistory: JSON.parse(localStorage.getItem('missionHistory')) || []
+        };
+
+        // Misiones del Guardián (Padres)
+        const guardianMissions = [
+            {
+                title: "NIVEL 1 - ESCUDO DE ATENCIÓN",
+                questions: [
+                    {
+                        question: "🛡️ Desvío de Energía: ¿Revisas tu celular mientras tu hijo(a) te habla?",
+                        type: "coins"
+                    },
+                    {
+                        question: "⏸️ Pausa Imposible: ¿Te cuesta dejar el celular en familia?",
+                        type: "coins"
+                    },
+                    {
+                        question: "🌙 Nivel Nocturno: ¿Usas dispositivos hasta muy tarde?",
+                        type: "coins"
+                    },
+                    {
+                        question: "👀 Desinterés: ¿Sabes qué juegos ve tu hijo(a)?",
+                        type: "coins"
+                    },
+                    {
+                        question: "🍽️ Modelo Silencioso: ¿Usas celular en comidas familiares?",
+                        type: "coins"
+                    }
+                ]
+            },
+            {
+                title: "NIVEL 2 - SUPERVISOR SUPREMO",
+                questions: [
+                    {
+                        question: "⏰ Regla de Oro: ¿Estableces horarios para dispositivos?",
+                        type: "coins"
+                    },
+                    {
+                        question: "🕵️‍♂️ Detección de Trampas: ¿Revisas mensajes de tu hijo(a)?",
+                        type: "coins"
+                    },
+                    {
+                        question: "💬 Conversación Maestra: ¿Hablas sobre riesgos digitales?",
+                        type: "coins"
+                    },
+                    {
+                        question: "🔑 Acceso Total: ¿Tienes las contraseñas?",
+                        type: "coins"
+                    },
+                    {
+                        question: "🏠 Zona de Seguridad: ¿Dispositivos solo en áreas comunes?",
+                        type: "coins"
+                    }
+                ]
+            },
+            {
+                title: "NIVEL 3 - DETECTOR DE PELIGROS",
+                questions: [
+                    {
+                        question: "😠 Modo Berrinche: ¿Se enoja al quitarle el celular?",
+                        type: "agreement"
+                    },
+                    {
+                        question: "👊 Poder de la Violencia: ¿Imita cosas agresivas?",
+                        type: "agreement"
+                    },
+                    {
+                        question: "👤 Trampa de Extraños: ¿Te preocupan contactos peligrosos?",
+                        type: "agreement"
+                    },
+                    {
+                        question: "🏝️ Aislamiento: ¿Afecta sus relaciones?",
+                        type: "agreement"
+                    },
+                    {
+                        question: "📚 Dificultad de Aprendizaje: ¿Interfiere con la escuela?",
+                        type: "agreement"
+                    }
+                ]
+            }
+        ];
+
+        // Mundos del Explorador (Niños)
+        const explorerWorlds = {
+            juegos: {
+                name: "MUNDO JUEGOS 🎮",
+                questions: [
+                    {
+                        question: "💰 ¿Cuántas monedas de energía usas en juegos?",
+                        type: "coins"
+                    },
+                    {
+                        question: "👤 ¿Hablas con desconocidos en los juegos?",
+                        type: "yesno"
+                    },
+                    {
+                        question: "⚠️ ¿Ves cosas raras en juegos? ¿Cómo qué?",
+                        type: "text"
+                    },
+                    {
+                        question: "👥 ¿Con quién exploras este mundo?",
+                        type: "character"
+                    },
+                    {
+                        question: "👻 ¿Algo te dio miedo? ¿Qué fue?",
+                        type: "text"
+                    }
+                ]
+            },
+            comunicacion: {
+                name: "MUNDO COMUNICACIÓN 💬",
+                questions: [
+                    {
+                        question: "💰 ¿Monedas en apps de chat?",
+                        type: "coins"
+                    },
+                    {
+                        question: "👤 ¿Hablas con extraños en chats?",
+                        type: "yesno"
+                    },
+                    {
+                        question: "⚠️ ¿Mensajes raros? ¿Cuáles?",
+                        type: "text"
+                    },
+                    {
+                        question: "👥 ¿Compañeros de aventura?",
+                        type: "character"
+                    },
+                    {
+                        question: "👻 ¿Mensajes que asustan?",
+                        type: "text"
+                    }
+                ]
+            },
+            aprendizaje: {
+                name: "MUNDO APRENDIZAJE 📚",
+                questions: [
+                    {
+                        question: "💰 ¿Monedas en apps educativas?",
+                        type: "coins"
+                    },
+                    {
+                        question: "👤 ¿Extraños en apps de estudio?",
+                        type: "yesno"
+                    },
+                    {
+                        question: "⚠️ ¿Contenido inapropiado?",
+                        type: "text"
+                    },
+                    {
+                        question: "👥 ¿Quién te acompaña?",
+                        type: "character"
+                    },
+                    {
+                        question: "👻 ¿Algo te asustó aprendiendo?",
+                        type: "text"
+                    }
+                ]
+            },
+            videos: {
+                name: "MUNDO VIDEOS 📺",
+                questions: [
+                    {
+                        question: "💰 ¿Monedas viendo videos?",
+                        type: "coins"
+                    },
+                    {
+                        question: "👤 ¿Te contactan extraños por videos?",
+                        type: "yesno"
+                    },
+                    {
+                        question: "⚠️ ¿Videos con cosas raras?",
+                        type: "text"
+                    },
+                    {
+                        question: "👥 ¿Con quién ves videos?",
+                        type: "character"
+                    },
+                    {
+                        question: "👻 ¿Videos que dan miedo?",
+                        type: "text"
+                    }
+                ]
+            }
+        };
+
+        // Personajes disponibles
+        const characters = [
+            { emoji: '🦸‍♂️', name: 'Super Papá', description: 'Protección total' },
+            { emoji: '🦸‍♀️', name: 'Super Mamá', description: 'Guía segura' },
+            { emoji: '👻', name: 'Fantasma Solitario', description: 'Aventura solo' },
+            { emoji: '😈', name: 'Demonio del Miedo', description: 'Cosas que asustan' },
+            { emoji: '🤫', name: 'Guardián Secreto', description: 'Habla con extraños' }
+        ];
+
+        // ======================
+        // FUNCIONES DEL JUEGO
+        // ======================
+
+        function showGuardianConfirmation() {
+            document.getElementById('missionSelector').style.display = 'none';
+            document.getElementById('confirmationScreen').style.display = 'block';
+        }
+
+        function startGuardianMission() {
+            gameState.currentMission = 'guardian';
+            gameState.currentQuestion = 0;
+            gameState.answers = [];
+            document.getElementById('confirmationScreen').style.display = 'none';
+            showMissionScreen();
+        }
+
+        function startExplorerMission() {
+            gameState.currentMission = 'explorer';
+            document.getElementById('missionSelector').style.display = 'none';
+            document.getElementById('worldSelector').style.display = 'block';
+        }
+
+        function startWorld(world) {
+            gameState.currentWorld = world;
+            gameState.currentQuestion = 0;
+            gameState.answers = [];
+            document.getElementById('worldSelector').style.display = 'none';
+            showMissionScreen();
+        }
+
+        function backToMissionSelect() {
+            document.getElementById('missionScreen').style.display = 'none';
+            document.getElementById('missionComplete').style.display = 'none';
+            document.getElementById('secretVault').style.display = 'none';
+            document.getElementById('worldSelector').style.display = 'none';
+            document.getElementById('confirmationScreen').style.display = 'none';
+            document.getElementById('missionSelector').style.display = 'block';
+            
+            // Resetear estado actual
+            gameState.currentMission = null;
+            gameState.currentWorld = null;
+            gameState.currentQuestion = 0;
+            gameState.answers = [];
+            
+            // Actualizar HUD
+            updateGameHUD();
+        }
+
+        function showMissionScreen() {
+            document.getElementById('missionScreen').style.display = 'block';
+            document.getElementById('missionComplete').style.display = 'none';
+            document.getElementById('secretVault').style.display = 'none';
+            updateMissionUI();
+        }
+
+        function updateMissionUI() {
+            const progress = document.getElementById('missionProgress');
+            const questionElement = document.getElementById('missionQuestion');
+            const optionsElement = document.getElementById('missionOptions');
+            const navigationElement = document.getElementById('missionNavigation');
+            
+            let currentData, totalQuestions, currentQuestionData;
+            
+            if (gameState.currentMission === 'guardian') {
+                currentData = guardianMissions[gameState.currentLevel - 1];
+                totalQuestions = currentData.questions.length;
+                currentQuestionData = currentData.questions[gameState.currentQuestion];
+                
+                questionElement.innerHTML = `
+                    <span>${currentData.title}</span>
+                    ${currentQuestionData.question}
+                `;
+                
+                // Calcular progreso
+                const progressPercent = ((gameState.currentQuestion + 1) / totalQuestions) * 100;
+                progress.style.width = `${progressPercent}%`;
+                
+            } else {
+                currentData = explorerWorlds[gameState.currentWorld];
+                totalQuestions = currentData.questions.length;
+                currentQuestionData = currentData.questions[gameState.currentQuestion];
+                
+                questionElement.innerHTML = `
+                    <span>${currentData.name}</span>
+                    ${currentQuestionData.question}
+                `;
+                
+                // Calcular progreso
+                const progressPercent = ((gameState.currentQuestion + 1) / totalQuestions) * 100;
+                progress.style.width = `${progressPercent}%`;
+            }
+            
+            // Mostrar opciones según tipo
+            optionsElement.innerHTML = getMissionOptionsHTML(currentQuestionData.type);
+            
+            // Mostrar navegación
+            navigationElement.innerHTML = getMissionNavigationHTML();
+            
+            // Actualizar estado de la respuesta si ya existe
+            if (gameState.answers[gameState.currentQuestion] !== undefined) {
+                selectAnswer(gameState.answers[gameState.currentQuestion]);
+            }
+            
+            // Actualizar HUD
+            updateGameHUD();
+        }
+
+        function getMissionOptionsHTML(type) {
+            switch(type) {
+                case "coins":
+                case "agreement":
+                    return `
+                        <div class="coins-grid">
+                            ${[1,2,3,4,5].map(num => `
+                                <div class="coin-option" onclick="selectAnswer(${num})" data-value="${num}">
+                                    ${num}
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div style="text-align: center; margin-top: 20px; color: #aaa; font-size: 14px;">
+                            ${type === "coins" 
+                                ? "1=💤 Nunca 2=😴 Poco 3=😐 A veces 4=😊 Casi siempre 5=💪 Siempre" 
+                                : "1=❌ Nada 2=👎 Poco 3=🤔 Regular 4=👍 De acuerdo 5=✅ Totalmente"}
+                        </div>
+                    `;
+                    
+                case "yesno":
+                    return `
+                        <div class="mission-options">
+                            <div class="mission-option" onclick="selectAnswer('Sí')">
+                                <span>✅</span> SÍ - ¡Sí pasa!
+                            </div>
+                            <div class="mission-option" onclick="selectAnswer('No')">
+                                <span>❌</span> NO - Nunca pasa
+                            </div>
+                        </div>
+                    `;
+                    
+                case "character":
+                    return `
+                        <div class="character-selector">
+                            ${characters.map(char => `
+                                <div class="character-option" onclick="selectAnswer('${char.emoji}')">
+                                    ${char.emoji}
+                                    <div class="character-tooltip">
+                                        <strong>${char.name}</strong><br>
+                                        ${char.description}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    
+                case "text":
+                    return `
+                        <input type="text" class="text-input" id="textAnswer" 
+                               placeholder="Escribe tu aventura aquí..." 
+                               oninput="enableNextButton()">
+                    `;
+            }
+        }
+
+        function getMissionNavigationHTML() {
+            let totalQuestions;
+            
+            if (gameState.currentMission === 'guardian') {
+                totalQuestions = guardianMissions[gameState.currentLevel - 1].questions.length;
+            } else {
+                totalQuestions = explorerWorlds[gameState.currentWorld].questions.length;
+            }
+            
+            return `
+                <button class="nav-btn prev" onclick="prevQuestion()" 
+                        ${gameState.currentQuestion === 0 ? 'disabled' : ''}>
+                    <span>⬅️</span> ANTERIOR
+                </button>
+                
+                ${gameState.currentQuestion === totalQuestions - 1 ? 
+                    `<button class="nav-btn finish" onclick="completeMission()" id="finishBtn" disabled>
+                        <span>🏁</span> COMPLETAR MISIÓN
+                    </button>` :
+                    `<button class="nav-btn next" onclick="nextQuestion()" id="nextBtn" disabled>
+                        <span>➡️</span> SIGUIENTE
+                    </button>`
+                }
+            `;
+        }
+
+        function selectAnswer(answer) {
+            // Guardar respuesta
+            gameState.answers[gameState.currentQuestion] = answer;
+            
+            // Quitar selección anterior
+            if (typeof answer === 'number') {
+                document.querySelectorAll('.coin-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                document.querySelector(`.coin-option[data-value="${answer}"]`).classList.add('selected');
+            } else if (answer === 'Sí' || answer === 'No') {
+                document.querySelectorAll('.mission-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+            } else if (characters.some(c => c.emoji === answer)) {
+                document.querySelectorAll('.character-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+            }
+            
+            // Habilitar siguiente botón
+            enableNextButton();
+            
+            // Efecto de sonido visual
+            showSelectionEffect();
+        }
+
+        function showSelectionEffect() {
+            const question = document.getElementById('missionQuestion');
+            question.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                question.style.transform = 'scale(1)';
+            }, 200);
+        }
+
+        function enableNextButton() {
+            const nextBtn = document.getElementById('nextBtn');
+            const finishBtn = document.getElementById('finishBtn');
+            
+            if (nextBtn) nextBtn.disabled = false;
+            if (finishBtn) finishBtn.disabled = false;
+        }
+
+        function nextQuestion() {
+            // Capturar respuesta de texto si existe
+            const textInput = document.getElementById('textAnswer');
+            if (textInput && textInput.value) {
+                gameState.answers[gameState.currentQuestion] = textInput.value;
+            }
+            
+            if (gameState.currentMission === 'guardian') {
+                const totalQuestions = guardianMissions[gameState.currentLevel - 1].questions.length;
+                if (gameState.currentQuestion < totalQuestions - 1) {
+                    gameState.currentQuestion++;
+                    updateMissionUI();
+                }
+            } else {
+                const totalQuestions = explorerWorlds[gameState.currentWorld].questions.length;
+                if (gameState.currentQuestion < totalQuestions - 1) {
+                    gameState.currentQuestion++;
+                    updateMissionUI();
+                }
+            }
+        }
+
+        function prevQuestion() {
+            if (gameState.currentQuestion > 0) {
+                gameState.currentQuestion--;
+                updateMissionUI();
+            }
+        }
+
+        function completeMission() {
+            // Capturar última respuesta de texto
+            const textInput = document.getElementById('textAnswer');
+            if (textInput && textInput.value) {
+                gameState.answers[gameState.currentQuestion] = textInput.value;
+            }
+            
+            // Calcular recompensa
+            let reward = 0;
+            if (gameState.currentMission === 'guardian') {
+                reward = calculateGuardianReward();
+            } else {
+                reward = calculateExplorerReward();
+            }
+            
+            // Actualizar estado del juego
+            gameState.totalCoins += reward;
+            
+            // Guardar misión completada
+            const missionRecord = {
+                mission: gameState.currentMission,
+                world: gameState.currentWorld,
+                level: gameState.currentLevel,
+                date: new Date().toLocaleString(),
+                answers: [...gameState.answers],
+                reward: reward
+            };
+            
+            gameState.missionHistory.push(missionRecord);
+            localStorage.setItem('missionHistory', JSON.stringify(gameState.missionHistory));
+            
+            // Mostrar pantalla de completado
+            showCompletionScreen(reward);
+        }
+
+        function calculateGuardianReward() {
+            let score = 0;
+            gameState.answers.forEach(answer => {
+                if (typeof answer === 'number') {
+                    // Para preguntas positivas (ej: establecer reglas), más alto es mejor
+                    const positiveQuestions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]; // Índices de primeras 10 preguntas
+                    const currentIndex = gameState.answers.indexOf(answer);
+                    
+                    if (positiveQuestions.includes(currentIndex)) {
+                        // Para preguntas positivas, 5 monedas es mejor
+                        score += answer;
+                    } else {
+                        // Para preguntas negativas (ej: desinterés), menos es mejor
+                        score += (6 - answer); // Invertir puntuación
+                    }
+                }
+            });
+            
+            // Bonus por completar nivel
+            score += 25;
+            
+            return Math.min(score, 100); // Máximo 100 monedas
+        }
+
+        function calculateExplorerReward() {
+            let score = 50; // Base por completar mundo
+            
+            gameState.answers.forEach((answer, index) => {
+                if (typeof answer === 'number') {
+                    // Para monedas de energía, menos es mejor (menos tiempo en pantalla)
+                    if (answer <= 2) score += 20;
+                    else if (answer === 3) score += 10;
+                    else score += 5;
+                } else if (answer === 'No') {
+                    score += 15; // Bonus por no hablar con extraños
+                } else if (['🦸‍♂️', '🦸‍♀️'].includes(answer)) {
+                    score += 20; // Bonus por estar con padres
+                } else if (answer === '👻') {
+                    score -= 10; // Penalización por estar solo
+                } else if (answer === '🤫') {
+                    score -= 15; // Penalización por hablar con extraños
+                }
+            });
+            
+            return Math.max(50, Math.min(score, 150)); // Entre 50 y 150 monedas
+        }
+
+        function showCompletionScreen(reward) {
+            document.getElementById('missionScreen').style.display = 'none';
+            document.getElementById('missionComplete').style.display = 'block';
+            
+            const emojiElement = document.getElementById('celebrationEmoji');
+            const titleElement = document.getElementById('completionTitle');
+            const messageElement = document.getElementById('completionMessage');
+            const rewardElement = document.getElementById('rewardCoins');
+            const totalElement = document.getElementById('newTotalCoins');
+            const buttonsElement = document.getElementById('actionButtons');
+            
+            // Personalizar según tipo de misión
+            if (gameState.currentMission === 'guardian') {
+                emojiElement.textContent = '🦸‍♂️';
+                titleElement.textContent = `¡NIVEL ${gameState.currentLevel} COMPLETADO!`;
+                messageElement.innerHTML = `
+                    <strong>¡Excelente trabajo Guardián!</strong><br>
+                    Has completado el Nivel ${gameState.currentLevel} de protección digital.<br>
+                    Tus respuestas ayudarán a mantener a tu familia segura en línea.
+                `;
+                
+                // Botones para guardián
+                if (gameState.currentLevel < 3) {
+                    buttonsElement.innerHTML = `
+                        <button class="action-btn continue" onclick="continueToNextLevel()">
+                            <span>⬆️</span> SIGUIENTE NIVEL
+                        </button>
+                        <button class="action-btn results" onclick="showSecretVault()">
+                            <span>🔐</span> VER TESORO
+                        </button>
+                        <button class="action-btn" onclick="backToMissionSelect()" style="background: linear-gradient(135deg, #666, #444);">
+                            <span>🏠</span> MENÚ
+                        </button>
+                    `;
+                } else {
+                    buttonsElement.innerHTML = `
+                        <button class="action-btn continue" onclick="showFinalCelebration()">
+                            <span>🏆</span> VER LOGROS
+                        </button>
+                        <button class="action-btn results" onclick="showSecretVault()">
+                            <span>🔐</span> VER TESORO
+                        </button>
+                        <button class="action-btn" onclick="backToMissionSelect()" style="background: linear-gradient(135deg, #666, #444);">
+                            <span>🏠</span> MENÚ
+                        </button>
+                    `;
+                }
+            } else {
+                // Explorador
+                emojiElement.textContent = '🎮';
+                titleElement.textContent = `¡MUNDO COMPLETADO!`;
+                const worldName = explorerWorlds[gameState.currentWorld].name;
+                messageElement.innerHTML = `
+                    <strong>¡Aventura completada!</strong><br>
+                    Has explorado el ${worldName}.<br>
+                    Sigues las reglas de seguridad digital. ¡Bien hecho!
+                `;
+                
+                // Botones para explorador
+                buttonsElement.innerHTML = `
+                    <button class="action-btn continue" onclick="continueMission()">
+                        <span>🌍</span> OTRO MUNDO
+                    </button>
+                    <button class="action-btn results" onclick="showSecretVault()">
+                        <span>🔐</span> VER TESORO
+                    </button>
+                    <button class="action-btn" onclick="backToMissionSelect()" style="background: linear-gradient(135deg, #666, #444);">
+                        <span>🏠</span> MENÚ
+                    </button>
+                `;
+            }
+            
+            // Mostrar recompensa
+            rewardElement.textContent = `+${reward}`;
+            totalElement.textContent = gameState.totalCoins;
+            
+            // Actualizar HUD y guardar
+            updateGameHUD();
+            localStorage.setItem('gameCoins', gameState.totalCoins);
+            localStorage.setItem('gameLevel', gameState.currentLevel);
+        }
+
+        function continueToNextLevel() {
+            gameState.currentLevel++;
+            gameState.currentQuestion = 0;
+            gameState.answers = [];
+            showMissionScreen();
+        }
+
+        function showFinalCelebration() {
+            document.getElementById('missionComplete').innerHTML = `
+                <div class="celebration-emoji">🏆</div>
+                <h2 style="color: gold;">¡GUARDIÁN MAESTRO!</h2>
+                <p style="font-size: 20px; color: #ddd;">
+                    ¡Felicidades! Has completado todos los niveles de protección digital.<br>
+                    Eres un Guardián Digital certificado.
+                </p>
+                
+                <div class="reward-display" style="border-color: gold; background: rgba(255,215,0,0.1);">
+                    <h3 style="color: gold;">🏆 LOGRO DESBLOQUEADO</h3>
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 60px; margin-bottom: 10px;">🦸‍♂️⭐</div>
+                        <p style="color: white; font-size: 18px;">Guardián Digital Certificado</p>
+                        <p style="color: #aaa; font-size: 14px;">Completaste los 3 niveles de protección</p>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="action-btn results" onclick="showSecretVault()">
+                        <span>📊</span> VER ESTADÍSTICAS
+                    </button>
+                    <button class="action-btn" onclick="backToMissionSelect()" style="background: linear-gradient(135deg, #666, #444);">
+                        <span>🏠</span> MENÚ PRINCIPAL
+                    </button>
+                </div>
+            `;
+        }
+
+        function showSecretVault() {
+            document.getElementById('missionComplete').style.display = 'none';
+            document.getElementById('secretVault').style.display = 'block';
+        }
+
+        function openVault() {
+            const username = document.getElementById('vaultUsername').value.trim();
+            const password = document.getElementById('vaultPassword').value.trim();
+            const errorElement = document.getElementById('vaultError');
+            
+            if (username === "usuario" && password === "usuario123") {
+                errorElement.textContent = "";
+                errorElement.style.color = "#00ff88";
+                
+                // Mostrar historial de misiones
+                displayMissionHistory();
+            } else {
+                errorElement.textContent = "❌ Código incorrecto. Usa: usuario / usuario123";
+                errorElement.style.color = "#ff4444";
+                
+                // Efecto de error
+                const inputs = document.querySelectorAll('.vault-input');
+                inputs.forEach(input => {
+                    input.style.animation = 'shake 0.5s';
+                    setTimeout(() => input.style.animation = '', 500);
+                });
+            }
+        }
+
+        function displayMissionHistory() {
+            const history = gameState.missionHistory;
+            let html = `
+                <h2 style="color: gold; margin-bottom: 20px;">📜 HISTORIAL DE MISIONES</h2>
+                <div style="background: rgba(0,0,0,0.5); padding: 20px; border-radius: 15px; max-height: 400px; overflow-y: auto;">
+            `;
+            
+            if (history.length === 0) {
+                html += `
+                    <p style="text-align: center; color: #aaa; padding: 40px;">
+                        🏜️ Aún no hay misiones completadas
+                    </p>
+                `;
+            } else {
+                history.forEach((mission, index) => {
+                    html += `
+                        <div style="margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; border-left: 4px solid ${mission.mission === 'guardian' ? '#2196F3' : '#FF9800'}">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <h3 style="color: white; margin: 0;">
+                                    ${mission.mission === 'guardian' ? '🦸‍♂️' : '🎮'} 
+                                    ${mission.mission === 'guardian' ? `Nivel ${mission.level}` : mission.world}
+                                </h3>
+                                <span style="color: gold; font-weight: bold;">💰 ${mission.reward}</span>
+                            </div>
+                            <p style="color: #aaa; font-size: 14px; margin: 5px 0;">
+                                📅 ${mission.date}
+                            </p>
+                            <div style="font-size: 12px; color: #888; margin-top: 10px;">
+                                ${mission.answers.slice(0, 3).map((ans, i) => `
+                                    <div>${i+1}. ${typeof ans === 'string' ? ans : ans + '⭐'}</div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                // Estadísticas
+                const totalMissions = history.length;
+                const totalReward = history.reduce((sum, mission) => sum + mission.reward, 0);
+                const guardianMissions = history.filter(m => m.mission === 'guardian').length;
+                const explorerMissions = history.filter(m => m.mission === 'explorer').length;
+                
+                html += `
+                    <div style="margin-top: 30px; padding: 15px; background: rgba(255,215,0,0.1); border-radius: 10px; border: 1px solid gold;">
+                        <h4 style="color: gold; margin: 0 0 10px 0;">📊 ESTADÍSTICAS</h4>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 14px;">
+                            <div>🦸‍♂️ Misiones Guardián: <strong>${guardianMissions}</strong></div>
+                            <div>👦 Misiones Explorador: <strong>${explorerMissions}</strong></div>
+                            <div>💰 Total Monedas: <strong>${totalReward}</strong></div>
+                            <div>🏆 Total Misiones: <strong>${totalMissions}</strong></div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += `</div>`;
+            
+            document.getElementById('secretVault').innerHTML = `
+                <h2 class="vault-title">💎 TESORO RECOLECTADO</h2>
+                ${html}
+                <button class="game-back-btn" onclick="backToMissionSelect()" style="margin-top: 30px;">
+                    🏠 VOLVER AL MENÚ
+                </button>
+            `;
+        }
+
+        function backToMissionComplete() {
+            document.getElementById('secretVault').style.display = 'none';
+            document.getElementById('missionComplete').style.display = 'block';
+        }
+
+        function updateGameHUD() {
+            document.getElementById('totalCoins').textContent = gameState.totalCoins;
+            document.getElementById('levelDisplay').textContent = `🏆 NIVEL ${gameState.currentLevel}`;
+        }
+
+        // Inicializar juego
+        function initGame() {
+            // Cargar estado guardado
+            const savedCoins = localStorage.getItem('gameCoins');
+            if (savedCoins) {
+                gameState.totalCoins = parseInt(savedCoins);
+            }
+            
+            // Cargar nivel
+            const savedLevel = localStorage.getItem('gameLevel');
+            if (savedLevel) {
+                gameState.currentLevel = parseInt(savedLevel);
+            }
+            
+            updateGameHUD();
+            
+            // Agregar animación de shake
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    25% { transform: translateX(-5px); }
+                    75% { transform: translateX(5px); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Guardar estado del juego al salir
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('gameCoins', gameState.totalCoins);
+            localStorage.setItem('gameLevel', gameState.currentLevel);
+            localStorage.setItem('missionHistory', JSON.stringify(gameState.missionHistory));
+        });
+
+        // Inicializar cuando cargue la página
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
